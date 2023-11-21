@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="insuptind.css">
+</head>
+
+<body>
+    <div id="product-container"></div>
+
+    <!-- Floating Add Product Button -->
+    <button class="floating-button" onclick="toggleAddProductForm()">+</button>
+
+    <!-- Add Product Form Popup -->
+    <div id="addProductFormPopup" class="popup-container">
+        <span class="popup-close" onclick="closeAddProductFormPopup()">&times;</span>
+        <h2 class="form-title add-form-title">Add New Product</h2>
+        <form onsubmit="addNewProduct(event)">
+            <label for="productName">Name:</label>
+            <input type="text" id="productName" required>
+            <label for="productImage">Image:</label>
+            <input type="file" id="productImage" accept="image/*" required>
+            <label for="productPrice">Price:</label>
+            <input type="number" id="productPrice" step="0.01" required>
+            <label for="productCategory">Category:</label>
+            <input type="text" id="productCategory" required>
+            <button type="submit">Add Product</button>
+            <button type="button" onclick="closeAddProductFormPopup()">Close</button>
+        </form>
+    </div>
+
+    <!-- Edit Product Modal Popup -->
+    <div id="editProductModalPopup" class="popup-container">
+        <span class="popup-close" onclick="closeEditProductModalPopup()">&times;</span>
+        <h2 class="form-title edit-form-title">Edit Product</h2>
+        <form onsubmit="editProduct(event)">
+            <input type="hidden" id="editProductIndex">
+            <label for="editProductName">Name:</label>
+            <input type="text" id="editProductName" required>
+            <label for="editProductImage">Image:</label>
+            <input type="file" id="editProductImage" accept="image/*" required>
+            <label for="editProductPrice">Price:</label>
+            <input type="number" id="editProductPrice" step="0.01" required>
+            <label for="editProductCategory">Category:</label>
+            <input type="text" id="editProductCategory" required>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="deleteProduct()">Delete Product</button>
+            <button type="button" onclick="closeEditProductModalPopup()">Close</button>
+        </form>
+    </div>
+
+    <script defer src="insuptindex.js"></script>
+</body>
+
+</html>

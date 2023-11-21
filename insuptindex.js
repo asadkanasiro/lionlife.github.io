@@ -26,60 +26,87 @@ function updateProductContainer() {
 }
 
 function toggleAddProductForm() {
-    const addProductForm = document.getElementById('addProductForm');
-    addProductForm.style.display = addProductForm.style.display === 'none' ? 'block' : 'none';
+    togglePopup('addProductFormPopup');
 }
 
 function addNewProduct(event) {
     event.preventDefault();
     const productName = document.getElementById('productName').value;
-    const productImageUrl = document.getElementById('productImageUrl').value;
+    const productImageInput = document.getElementById('productImage');
     const productPrice = parseFloat(document.getElementById('productPrice').value);
     const productCategory = document.getElementById('productCategory').value;
 
-    const newProduct = {
-        name: productName,
-        image: productImageUrl,
-        price: productPrice,
-        category: productCategory,
+    const productImage = productImageInput.files[0];
+
+    if (!productName || !productImage || isNaN(productPrice) || !productCategory) {
+        showErrorMessage('Please fill in all fields.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const imageDataURL = e.target.result;
+
+        const newProduct = {
+            name: productName,
+            image: imageDataURL,
+            price: productPrice,
+            category: productCategory,
+        };
+
+        products.push(newProduct);
+        updateProductContainer();
+        toggleAddProductForm();
+        saveData();
     };
 
-    products.push(newProduct);
-    updateProductContainer();
-    toggleAddProductForm();
-    saveData();
+    reader.readAsDataURL(productImage);
 }
 
 function openEditModal(index) {
     const product = products[index];
     document.getElementById('editProductIndex').value = index;
     document.getElementById('editProductName').value = product.name;
-    document.getElementById('editProductImageUrl').value = product.image;
+
+    const editProductImageInput = document.getElementById('editProductImage');
+    editProductImageInput.value = ''; // Clear the input value
+
     document.getElementById('editProductPrice').value = product.price;
     document.getElementById('editProductCategory').value = product.category;
 
-    const editProductModal = document.getElementById('editProductModal');
-    editProductModal.style.display = 'block';
+    togglePopup('editProductModalPopup');
 }
 
 function editProduct(event) {
     event.preventDefault();
     const index = parseInt(document.getElementById('editProductIndex').value);
     const productName = document.getElementById('editProductName').value;
-    const productImageUrl = document.getElementById('editProductImageUrl').value;
+    const editProductImageInput = document.getElementById('editProductImage');
     const productPrice = parseFloat(document.getElementById('editProductPrice').value);
     const productCategory = document.getElementById('editProductCategory').value;
 
-    if (!isNaN(index)) {
+    const editProductImage = editProductImageInput.files[0];
+
+    if (isNaN(index) || !productName || isNaN(productPrice) || !productCategory) {
+        showErrorMessage('Please fill in all fields.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const imageDataURL = e.target.result;
+
         products[index].name = productName;
-        products[index].image = productImageUrl;
+        products[index].image = imageDataURL;
         products[index].price = productPrice;
         products[index].category = productCategory;
 
         updateProductContainer();
         closeEditModal();
         saveData();
-    }
+    };
+
+    reader.readAsDataURL(editProductImage);
 }
 
 function deleteProduct() {
@@ -94,8 +121,41 @@ function deleteProduct() {
 }
 
 function closeEditModal() {
-    const editProductModal = document.getElementById('editProductModal');
-    editProductModal.style.display = 'none';
+    closePopup('editProductModalPopup');
+}
+
+function closeAddProductFormPopup() {
+    closePopup('addProductFormPopup');
+}
+
+function closeEditProductModalPopup() {
+    closePopup('editProductModalPopup');
+}
+
+function closePopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.style.display = 'none';
+}
+
+function togglePopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+}
+
+function showErrorMessage(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+    });
+}
+
+function showSuccessMessage(message) {
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: message,
+    });
 }
 
 function saveData() {
@@ -118,27 +178,11 @@ function loadData() {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 async function storeData() {
     const username = 'asadkanasiro';
     const repo = 'lionslife.github.io';
     const path = 'products.json';
-    const token = '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';
+    const token = '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';
 
     try {
         const existingDataResponse = await fetchDataFromGitHub(username, repo, path, token);
@@ -169,7 +213,7 @@ async function retrieveData() {
     const username = 'asadkanasiro';
     const repo = 'lionslife.github.io';
     const path = 'products.json';
-    const token = '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';
+    const token = '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';
 
     try {
         const response = await fetchDataFromGitHub(username, repo, path, token);
@@ -195,55 +239,5 @@ async function fetchDataFromGitHub(username, repo, path, token) {
     });
 }
 
-function showSuccessMessage(message) {
-    Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: message,
-    });
-}
-
-function showErrorMessage(message) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: message,
-    });
-}
-
 // Initial display of products and auto-load
 loadData();
-
-
-
-
-// ... (Your existing JavaScript code)
-
-function toggleAddProductForm() {
-    togglePopup('addProductFormPopup');
-}
-
-function openEditModal(index) {
-    const product = products[index];
-    document.getElementById('editProductIndex').value = index;
-    document.getElementById('editProductName').value = product.name;
-    document.getElementById('editProductImageUrl').value = product.image;
-    document.getElementById('editProductPrice').value = product.price;
-    document.getElementById('editProductCategory').value = product.category;
-
-    togglePopup('editProductModalPopup');
-}
-
-function closeEditModal() {
-    closePopup('editProductModalPopup');
-}
-
-function togglePopup(popupId) {
-    const popup = document.getElementById(popupId);
-    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
-}
-
-function closePopup(popupId) {
-    const popup = document.getElementById(popupId);
-    popup.style.display = 'none';
-}

@@ -212,7 +212,7 @@ async function storeData() {
 async function retrieveData() {
     const username = 'asadkanasiro';
     const repo = 'lionslife.github.io';
-    const path = 'products.json';
+    const path = 'products1.json';
     const token = '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';
 
     try {
